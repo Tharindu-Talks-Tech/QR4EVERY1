@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Free QR Code Generator - No Expiry</title>
+    <title>QR 4 Every 1</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <style>
       * {
@@ -308,7 +308,7 @@
   <body>
     <div class="container">
       <div class="header">
-        <h1>🎯 QR Code Generator</h1>
+        <h1>QR 4 Every 1</h1>
         <p>Create permanent QR codes that never expire - 100% Free!</p>
       </div>
 
@@ -404,7 +404,7 @@
       let statsLoaded = false; // Track if we've loaded initial stats
 
       // Clear any existing localStorage for fresh start
-      localStorage.removeItem('qrStats');
+      localStorage.removeItem("qrStats");
 
       // Load stats on page load
       window.addEventListener("load", loadStats);
@@ -441,8 +441,7 @@
 
       function loadLocalStats() {
         const localStats = JSON.parse(
-          localStorage.getItem("qrStats") ||
-            '{"created": 0, "downloaded": 0}'
+          localStorage.getItem("qrStats") || '{"created": 0, "downloaded": 0}'
         );
         // Validate local stats
         if (
