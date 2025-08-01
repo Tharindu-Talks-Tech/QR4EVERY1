@@ -12,6 +12,7 @@ A beautiful, fast, and completely free QR code generator that works entirely in 
 ## 🌟 Features
 
 ### ✨ **Completely Free & Open**
+
 - **🆓 Forever Free** - No hidden costs, no premium features, no limitations
 - **🔓 Open Source** - Use, edit, modify, and distribute freely
 - **🚫 No Registration** - Start generating QR codes immediately
@@ -19,6 +20,7 @@ A beautiful, fast, and completely free QR code generator that works entirely in 
 - **⏰ No Expiration** - Your QR codes never expire
 
 ### 🎨 **Easy to Use**
+
 - **🖱️ One-Click Generation** - Simple and intuitive interface
 - **📱 Mobile Responsive** - Works perfectly on all devices
 - **🎯 Multiple Formats** - Support for various QR code types
@@ -26,6 +28,7 @@ A beautiful, fast, and completely free QR code generator that works entirely in 
 - **📥 Instant Download** - PNG and JPG format support
 
 ### 🔧 **QR Code Types Supported**
+
 - 📝 **Text** - Plain text messages
 - 🌐 **Website URLs** - Direct links to websites
 - 📧 **Email** - Pre-filled email composition
@@ -34,6 +37,7 @@ A beautiful, fast, and completely free QR code generator that works entirely in 
 - 📶 **WiFi** - Instant WiFi network sharing
 
 ### 🚀 **Multi-Platform Support**
+
 - 💻 **Desktop** - Windows, macOS, Linux
 - 📱 **Mobile** - iOS, Android
 - 🌐 **Web Browsers** - Chrome, Firefox, Safari, Edge
@@ -43,7 +47,7 @@ A beautiful, fast, and completely free QR code generator that works entirely in 
 
 🔗 **[Try it now!](https://your-azure-static-web-app-url.azurestaticapps.net)**
 
-*Deployed on Azure Static Web Apps for lightning-fast performance worldwide.*
+_Deployed on Azure Static Web Apps for lightning-fast performance worldwide._
 
 ## 📸 Screenshots
 
@@ -60,6 +64,7 @@ A beautiful, fast, and completely free QR code generator that works entirely in 
 ## 🏗️ Technical Details
 
 ### Built With
+
 - **HTML5** - Semantic markup
 - **CSS3** - Modern styling with gradients and animations
 - **Vanilla JavaScript** - No frameworks, pure performance
@@ -67,6 +72,7 @@ A beautiful, fast, and completely free QR code generator that works entirely in 
 - **Azure Static Web Apps** - Global deployment and hosting
 
 ### Browser Support
+
 - ✅ Chrome 60+
 - ✅ Firefox 55+
 - ✅ Safari 12+
@@ -76,6 +82,7 @@ A beautiful, fast, and completely free QR code generator that works entirely in 
 ## 🚀 Deployment
 
 This project is deployed using **Azure Static Web Apps**, providing:
+
 - 🌍 **Global CDN** - Fast loading worldwide
 - 🔒 **HTTPS by default** - Secure connections
 - ⚡ **Instant deployment** - From GitHub commits
@@ -132,13 +139,14 @@ We appreciate all contributors who help make this project better! 🙏
 
 <!-- ALL-CONTRIBUTORS-LIST:START -->
 <!-- This section will be automatically updated -->
+
 ### 🎉 Hall of Fame
 
-| Avatar | Name | Contributions |
-|--------|------|---------------|
+| Avatar                                                                                                   | Name                                                              | Contributions                   |
+| -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------- |
 | <img src="https://github.com/Tharindu-Talks-Tech.png" width="50" height="50" style="border-radius: 50%"> | **[Tharindu-Talks-Tech](https://github.com/Tharindu-Talks-Tech)** | 🚀 Project Creator & Maintainer |
 
-*Want to see your name here? [Contribute to the project!](#-contributing)*
+_Want to see your name here? [Contribute to the project!](#-contributing)_
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
@@ -147,6 +155,7 @@ We appreciate all contributors who help make this project better! 🙏
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ### What this means:
+
 - ✅ **Use** - Use for personal and commercial projects
 - ✅ **Modify** - Change and adapt the code
 - ✅ **Distribute** - Share with others
@@ -155,18 +164,19 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 🌟 Why Choose QR4EVERY1?
 
-| Feature | QR4EVERY1 | Other Generators |
-|---------|-----------|------------------|
-| **Cost** | 🆓 Forever Free | 💰 Often paid |
-| **Registration** | 🚫 Not required | 📝 Usually required |
-| **Expiry** | ⏰ Never expires | ⏰ Often expires |
-| **Privacy** | 🔒 Local processing | 📡 Server tracking |
-| **Open Source** | ✅ Fully open | ❌ Closed source |
-| **Customization** | 🎨 Full control | 🔒 Limited options |
+| Feature           | QR4EVERY1           | Other Generators    |
+| ----------------- | ------------------- | ------------------- |
+| **Cost**          | 🆓 Forever Free     | 💰 Often paid       |
+| **Registration**  | 🚫 Not required     | 📝 Usually required |
+| **Expiry**        | ⏰ Never expires    | ⏰ Often expires    |
+| **Privacy**       | 🔒 Local processing | 📡 Server tracking  |
+| **Open Source**   | ✅ Fully open       | ❌ Closed source    |
+| **Customization** | 🎨 Full control     | 🔒 Limited options  |
 
 ## 🎯 Roadmap
 
 ### 🔮 Upcoming Features
+
 - [ ] 🎨 More color themes
 - [ ] 📊 QR code analytics (optional)
 - [ ] 🔗 Batch QR generation
