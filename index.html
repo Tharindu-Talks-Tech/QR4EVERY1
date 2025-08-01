@@ -1,529 +1,574 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Free QR Code Generator - No Expiry</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
 
+      .container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        max-width: 600px;
+        width: 100%;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        animation: slideIn 0.6s ease-out;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .header h1 {
+        color: #333;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .header p {
+        color: #666;
+        font-size: 1.1em;
+      }
+
+      .stats-banner {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 15px;
+      }
+
+      .stat-item {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        padding: 15px;
+        backdrop-filter: blur(10px);
+      }
+
+      .stat-number {
+        font-size: 2em;
+        font-weight: bold;
+        display: block;
+        animation: countUp 2s ease-out;
+      }
+
+      .stat-label {
+        font-size: 0.9em;
+        opacity: 0.9;
+        margin-top: 5px;
+      }
+
+      @keyframes countUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .input-section {
+        margin-bottom: 30px;
+      }
+
+      .input-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 600;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e1e5e9;
+        border-radius: 10px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: #fff;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .options-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .generate-btn {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 30px;
+        position: relative;
+      }
+
+      .generate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+      }
+
+      .generate-btn:active {
+        transform: translateY(0);
+      }
+
+      .generate-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+        margin-right: 10px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .qr-result {
+        text-align: center;
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 20px;
+        display: none;
+      }
+
+      .qr-result.show {
+        display: block;
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      #qrCanvas {
+        border: 3px solid #fff;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+
+      .download-btn {
+        background: #28a745;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 10px;
+      }
+
+      .download-btn:hover {
+        background: #218838;
+        transform: translateY(-2px);
+      }
+
+      .features {
+        background: rgba(40, 167, 69, 0.1);
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 30px;
+      }
+
+      .features h3 {
+        color: #28a745;
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      .features ul {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+      }
+
+      .features li {
+        color: #333;
+        padding: 5px 0;
+        position: relative;
+        padding-left: 25px;
+      }
+
+      .features li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #28a745;
+        font-weight: bold;
+      }
+
+      @media (max-width: 768px) {
         .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 600px;
-            width: 100%;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            animation: slideIn 0.6s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
+          padding: 20px;
+          margin: 10px;
         }
 
         .header h1 {
-            color: #333;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+          font-size: 2em;
         }
 
-        .header p {
-            color: #666;
-            font-size: 1.1em;
-        }
-
-        .stats-banner {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
-        }
-
+        .options-grid,
         .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 15px;
+          grid-template-columns: 1fr;
         }
-
-        .stat-item {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            padding: 15px;
-            backdrop-filter: blur(10px);
-        }
-
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-            display: block;
-            animation: countUp 2s ease-out;
-        }
-
-        .stat-label {
-            font-size: 0.9em;
-            opacity: 0.9;
-            margin-top: 5px;
-        }
-
-        @keyframes countUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .input-section {
-            margin-bottom: 30px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: #fff;
-        }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .generate-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 30px;
-            position: relative;
-        }
-
-        .generate-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .generate-btn:active {
-            transform: translateY(0);
-        }
-
-        .generate-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 10px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .qr-result {
-            text-align: center;
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 30px;
-            margin-top: 20px;
-            display: none;
-        }
-
-        .qr-result.show {
-            display: block;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        #qrCanvas {
-            border: 3px solid #fff;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .download-btn {
-            background: #28a745;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 10px;
-        }
-
-        .download-btn:hover {
-            background: #218838;
-            transform: translateY(-2px);
-        }
-
-        .features {
-            background: rgba(40, 167, 69, 0.1);
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 30px;
-        }
-
-        .features h3 {
-            color: #28a745;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .features ul {
-            list-style: none;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 10px;
-        }
-
-        .features li {
-            color: #333;
-            padding: 5px 0;
-            position: relative;
-            padding-left: 25px;
-        }
-
-        .features li::before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #28a745;
-            font-weight: bold;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-                margin: 10px;
-            }
-
-            .header h1 {
-                font-size: 2em;
-            }
-
-            .options-grid, .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="header">
-            <h1>🎯 QR Code Generator</h1>
-            <p>Create permanent QR codes that never expire - 100% Free!</p>
+      <div class="header">
+        <h1>🎯 QR Code Generator</h1>
+        <p>Create permanent QR codes that never expire - 100% Free!</p>
+      </div>
+
+      <div class="stats-banner">
+        <h3>🌟 Community Impact</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-number" id="qrCreatedCount">Loading...</span>
+            <div class="stat-label">QR Codes Created</div>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="qrDownloadCount">Loading...</span>
+            <div class="stat-label">Downloads</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-section">
+        <div class="input-group">
+          <label for="qrType">QR Code Type:</label>
+          <select id="qrType" onchange="updateInputFields()">
+            <option value="text">Text</option>
+            <option value="url">Website URL</option>
+            <option value="email">Email</option>
+            <option value="phone">Phone Number</option>
+            <option value="sms">SMS</option>
+            <option value="wifi">WiFi</option>
+          </select>
         </div>
 
-        <div class="stats-banner">
-            <h3>🌟 Community Impact</h3>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <span class="stat-number" id="qrCreatedCount">Loading...</span>
-                    <div class="stat-label">QR Codes Created</div>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="qrDownloadCount">Loading...</span>
-                    <div class="stat-label">Downloads</div>
-                </div>
-            </div>
+        <div id="inputFields">
+          <div class="input-group">
+            <label for="qrContent">Enter your text:</label>
+            <textarea
+              id="qrContent"
+              placeholder="Type your text here..."
+            ></textarea>
+          </div>
         </div>
 
-        <div class="input-section">
-            <div class="input-group">
-                <label for="qrType">QR Code Type:</label>
-                <select id="qrType" onchange="updateInputFields()">
-                    <option value="text">Text</option>
-                    <option value="url">Website URL</option>
-                    <option value="email">Email</option>
-                    <option value="phone">Phone Number</option>
-                    <option value="sms">SMS</option>
-                    <option value="wifi">WiFi</option>
-                </select>
-            </div>
+        <div class="options-grid">
+          <div class="input-group">
+            <label for="qrSize">Size (pixels):</label>
+            <select id="qrSize">
+              <option value="200">200x200</option>
+              <option value="300" selected>300x300</option>
+              <option value="400">400x400</option>
+              <option value="500">500x500</option>
+            </select>
+          </div>
 
-            <div id="inputFields">
-                <div class="input-group">
-                    <label for="qrContent">Enter your text:</label>
-                    <textarea id="qrContent" placeholder="Type your text here..."></textarea>
-                </div>
-            </div>
-
-            <div class="options-grid">
-                <div class="input-group">
-                    <label for="qrSize">Size (pixels):</label>
-                    <select id="qrSize">
-                        <option value="200">200x200</option>
-                        <option value="300" selected>300x300</option>
-                        <option value="400">400x400</option>
-                        <option value="500">500x500</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <label for="qrColor">Foreground Color:</label>
-                    <input type="color" id="qrColor" value="#000000">
-                </div>
-            </div>
-
-            <button class="generate-btn" onclick="generateQR()" id="generateBtn">
-                🎨 Generate QR Code
-            </button>
+          <div class="input-group">
+            <label for="qrColor">Foreground Color:</label>
+            <input type="color" id="qrColor" value="#000000" />
+          </div>
         </div>
 
-        <div id="qrResult" class="qr-result">
-            <canvas id="qrCanvas"></canvas>
-            <div>
-                <button class="download-btn" onclick="downloadQR('png')">📱 Download PNG</button>
-                <button class="download-btn" onclick="downloadQR('jpg')">🖼️ Download JPG</button>
-            </div>
-        </div>
+        <button class="generate-btn" onclick="generateQR()" id="generateBtn">
+          🎨 Generate QR Code
+        </button>
+      </div>
 
-        <div class="features">
-            <h3>✨ Why Choose Our QR Generator?</h3>
-            <ul>
-                <li>Completely Free Forever</li>
-                <li>No Expiration Date</li>
-                <li>No Registration Required</li>
-                <li>Works Offline</li>
-                <li>High Quality Output</li>
-                <li>Multiple Formats</li>
-                <li>Privacy Focused</li>
-                <li>Instant Generation</li>
-            </ul>
+      <div id="qrResult" class="qr-result">
+        <canvas id="qrCanvas"></canvas>
+        <div>
+          <button class="download-btn" onclick="downloadQR('png')">
+            📱 Download PNG
+          </button>
+          <button class="download-btn" onclick="downloadQR('jpg')">
+            🖼️ Download JPG
+          </button>
         </div>
+      </div>
+
+      <div class="features">
+        <h3>✨ Why Choose Our QR Generator?</h3>
+        <ul>
+          <li>Completely Free Forever</li>
+          <li>No Expiration Date</li>
+          <li>No Registration Required</li>
+          <li>Works Offline</li>
+          <li>High Quality Output</li>
+          <li>Multiple Formats</li>
+          <li>Privacy Focused</li>
+          <li>Instant Generation</li>
+        </ul>
+      </div>
     </div>
 
     <script>
-        let qrCode = null;
-        let stats = { created: 150, downloaded: 89 }; // Start with consistent defaults
-        let statsLoaded = false; // Track if we've loaded initial stats
+      let qrCode = null;
+      let stats = { created: 0, downloaded: 0 }; // Fresh start with 0
+      let statsLoaded = false; // Track if we've loaded initial stats
 
-        // Load stats on page load
-        window.addEventListener('load', loadStats);
+      // Clear any existing localStorage for fresh start
+      localStorage.removeItem('qrStats');
 
-        async function loadStats() {
-            // Prevent multiple loading attempts
-            if (statsLoaded) return;
-            
-            try {
-                const response = await fetch('/api/stats');
-                if (response.ok) {
-                    const data = await response.json();
-                    // Only update if we got valid data
-                    if (data && typeof data.created === 'number' && typeof data.downloaded === 'number') {
-                        stats = data;
-                        statsLoaded = true;
-                        updateStatsDisplay();
-                        console.log('Stats loaded from API:', stats);
-                    } else {
-                        throw new Error('Invalid data format from API');
-                    }
-                } else {
-                    throw new Error(`API responded with status: ${response.status}`);
-                }
-            } catch (error) {
-                console.log('API not available, using local stats:', error.message);
-                loadLocalStats();
+      // Load stats on page load
+      window.addEventListener("load", loadStats);
+
+      async function loadStats() {
+        // Prevent multiple loading attempts
+        if (statsLoaded) return;
+
+        try {
+          const response = await fetch("/api/stats");
+          if (response.ok) {
+            const data = await response.json();
+            // Only update if we got valid data
+            if (
+              data &&
+              typeof data.created === "number" &&
+              typeof data.downloaded === "number"
+            ) {
+              stats = data;
+              statsLoaded = true;
+              updateStatsDisplay();
+              console.log("Stats loaded from API:", stats);
+            } else {
+              throw new Error("Invalid data format from API");
             }
+          } else {
+            throw new Error(`API responded with status: ${response.status}`);
+          }
+        } catch (error) {
+          console.log("API not available, using local stats:", error.message);
+          loadLocalStats();
         }
+      }
 
-        function loadLocalStats() {
-            const localStats = JSON.parse(localStorage.getItem('qrStats') || '{"created": 150, "downloaded": 89}');
-            // Validate local stats
-            if (localStats && typeof localStats.created === 'number' && typeof localStats.downloaded === 'number') {
-                stats = localStats;
-            }
-            statsLoaded = true;
-            updateStatsDisplay();
-            console.log('Stats loaded from localStorage:', stats);
+      function loadLocalStats() {
+        const localStats = JSON.parse(
+          localStorage.getItem("qrStats") ||
+            '{"created": 0, "downloaded": 0}'
+        );
+        // Validate local stats
+        if (
+          localStats &&
+          typeof localStats.created === "number" &&
+          typeof localStats.downloaded === "number"
+        ) {
+          stats = localStats;
         }
+        statsLoaded = true;
+        updateStatsDisplay();
+        console.log("Stats loaded from localStorage:", stats);
+      }
 
-        function updateStatsDisplay() {
-            const createdElement = document.getElementById('qrCreatedCount');
-            const downloadedElement = document.getElementById('qrDownloadCount');
-            
-            // Only animate if elements exist and we have valid stats
-            if (createdElement && downloadedElement && statsLoaded) {
-                animateNumber(createdElement, stats.created);
-                animateNumber(downloadedElement, stats.downloaded);
-            }
+      function updateStatsDisplay() {
+        const createdElement = document.getElementById("qrCreatedCount");
+        const downloadedElement = document.getElementById("qrDownloadCount");
+
+        // Only animate if elements exist and we have valid stats
+        if (createdElement && downloadedElement && statsLoaded) {
+          animateNumber(createdElement, stats.created);
+          animateNumber(downloadedElement, stats.downloaded);
         }
+      }
 
-        function animateNumber(element, target) {
-            const start = 0;
-            const duration = 2000;
-            const startTime = performance.now();
-            
-            function update(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const current = Math.floor(start + (target - start) * progress);
-                
-                element.textContent = current.toLocaleString();
-                
-                if (progress < 1) {
-                    requestAnimationFrame(update);
-                }
-            }
-            
+      function animateNumber(element, target) {
+        const start = 0;
+        const duration = 2000;
+        const startTime = performance.now();
+
+        function update(currentTime) {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const current = Math.floor(start + (target - start) * progress);
+
+          element.textContent = current.toLocaleString();
+
+          if (progress < 1) {
             requestAnimationFrame(update);
+          }
         }
 
-        async function incrementStats(type) {
-            // Don't increment if we haven't loaded initial stats yet
-            if (!statsLoaded) {
-                console.log('Stats not loaded yet, skipping increment');
-                return;
-            }
-            
-            try {
-                const response = await fetch('/api/increment', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ type: type })
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    // Validate the response data
-                    if (data && typeof data.created === 'number' && typeof data.downloaded === 'number') {
-                        stats = data;
-                        updateStatsDisplay();
-                        // Also save to localStorage as backup
-                        localStorage.setItem('qrStats', JSON.stringify(stats));
-                        console.log(`${type} incremented via API:`, stats);
-                    } else {
-                        throw new Error('Invalid response data from increment API');
-                    }
-                } else {
-                    throw new Error(`API responded with status: ${response.status}`);
-                }
-            } catch (error) {
-                console.log('API increment failed, using local increment:', error.message);
-                incrementLocalStats(type);
-            }
+        requestAnimationFrame(update);
+      }
+
+      async function incrementStats(type) {
+        // Don't increment if we haven't loaded initial stats yet
+        if (!statsLoaded) {
+          console.log("Stats not loaded yet, skipping increment");
+          return;
         }
 
-        function incrementLocalStats(type) {
-            if (type === 'created') {
-                stats.created++;
-            } else if (type === 'downloaded') {
-                stats.downloaded++;
+        try {
+          const response = await fetch("/api/increment", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ type: type }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            // Validate the response data
+            if (
+              data &&
+              typeof data.created === "number" &&
+              typeof data.downloaded === "number"
+            ) {
+              stats = data;
+              updateStatsDisplay();
+              // Also save to localStorage as backup
+              localStorage.setItem("qrStats", JSON.stringify(stats));
+              console.log(`${type} incremented via API:`, stats);
+            } else {
+              throw new Error("Invalid response data from increment API");
             }
-            
-            localStorage.setItem('qrStats', JSON.stringify(stats));
-            updateStatsDisplay();
-            console.log(`${type} incremented locally:`, stats);
+          } else {
+            throw new Error(`API responded with status: ${response.status}`);
+          }
+        } catch (error) {
+          console.log(
+            "API increment failed, using local increment:",
+            error.message
+          );
+          incrementLocalStats(type);
+        }
+      }
+
+      function incrementLocalStats(type) {
+        if (type === "created") {
+          stats.created++;
+        } else if (type === "downloaded") {
+          stats.downloaded++;
         }
 
-        function updateInputFields() {
-            const type = document.getElementById('qrType').value;
-            const inputFields = document.getElementById('inputFields');
-            
-            let html = '';
-            
-            switch(type) {
-                case 'text':
-                    html = `
+        localStorage.setItem("qrStats", JSON.stringify(stats));
+        updateStatsDisplay();
+        console.log(`${type} incremented locally:`, stats);
+      }
+
+      function updateInputFields() {
+        const type = document.getElementById("qrType").value;
+        const inputFields = document.getElementById("inputFields");
+
+        let html = "";
+
+        switch (type) {
+          case "text":
+            html = `
                         <div class="input-group">
                             <label for="qrContent">Enter your text:</label>
                             <textarea id="qrContent" placeholder="Type your text here..."></textarea>
                         </div>
                     `;
-                    break;
-                case 'url':
-                    html = `
+            break;
+          case "url":
+            html = `
                         <div class="input-group">
                             <label for="qrContent">Website URL:</label>
                             <input type="url" id="qrContent" placeholder="https://example.com">
                         </div>
                     `;
-                    break;
-                case 'email':
-                    html = `
+            break;
+          case "email":
+            html = `
                         <div class="input-group">
                             <label for="emailTo">Email Address:</label>
                             <input type="email" id="emailTo" placeholder="someone@example.com">
@@ -537,17 +582,17 @@
                             <textarea id="emailBody" placeholder="Email message"></textarea>
                         </div>
                     `;
-                    break;
-                case 'phone':
-                    html = `
+            break;
+          case "phone":
+            html = `
                         <div class="input-group">
                             <label for="qrContent">Phone Number:</label>
                             <input type="tel" id="qrContent" placeholder="+1234567890">
                         </div>
                     `;
-                    break;
-                case 'sms':
-                    html = `
+            break;
+          case "sms":
+            html = `
                         <div class="input-group">
                             <label for="smsNumber">Phone Number:</label>
                             <input type="tel" id="smsNumber" placeholder="+1234567890">
@@ -557,9 +602,9 @@
                             <textarea id="smsMessage" placeholder="SMS message"></textarea>
                         </div>
                     `;
-                    break;
-                case 'wifi':
-                    html = `
+            break;
+          case "wifi":
+            html = `
                         <div class="input-group">
                             <label for="wifiSSID">Network Name (SSID):</label>
                             <input type="text" id="wifiSSID" placeholder="Your WiFi Name">
@@ -577,143 +622,149 @@
                             </select>
                         </div>
                     `;
-                    break;
-            }
-            
-            inputFields.innerHTML = html;
+            break;
         }
 
-        function getQRContent() {
-            const type = document.getElementById('qrType').value;
-            
-            switch(type) {
-                case 'text':
-                case 'url':
-                case 'phone':
-                    return document.getElementById('qrContent').value;
-                    
-                case 'email':
-                    const emailTo = document.getElementById('emailTo').value;
-                    const emailSubject = document.getElementById('emailSubject').value;
-                    const emailBody = document.getElementById('emailBody').value;
-                    let emailString = `mailto:${emailTo}`;
-                    if (emailSubject || emailBody) {
-                        emailString += '?';
-                        if (emailSubject) emailString += `subject=${encodeURIComponent(emailSubject)}`;
-                        if (emailSubject && emailBody) emailString += '&';
-                        if (emailBody) emailString += `body=${encodeURIComponent(emailBody)}`;
-                    }
-                    return emailString;
-                    
-                case 'sms':
-                    const smsNumber = document.getElementById('smsNumber').value;
-                    const smsMessage = document.getElementById('smsMessage').value;
-                    return `sms:${smsNumber}${smsMessage ? `?body=${encodeURIComponent(smsMessage)}` : ''}`;
-                    
-                case 'wifi':
-                    const ssid = document.getElementById('wifiSSID').value;
-                    const password = document.getElementById('wifiPassword').value;
-                    const security = document.getElementById('wifiSecurity').value;
-                    return `WIFI:T:${security};S:${ssid};P:${password};;`;
-                    
-                default:
-                    return '';
+        inputFields.innerHTML = html;
+      }
+
+      function getQRContent() {
+        const type = document.getElementById("qrType").value;
+
+        switch (type) {
+          case "text":
+          case "url":
+          case "phone":
+            return document.getElementById("qrContent").value;
+
+          case "email":
+            const emailTo = document.getElementById("emailTo").value;
+            const emailSubject = document.getElementById("emailSubject").value;
+            const emailBody = document.getElementById("emailBody").value;
+            let emailString = `mailto:${emailTo}`;
+            if (emailSubject || emailBody) {
+              emailString += "?";
+              if (emailSubject)
+                emailString += `subject=${encodeURIComponent(emailSubject)}`;
+              if (emailSubject && emailBody) emailString += "&";
+              if (emailBody)
+                emailString += `body=${encodeURIComponent(emailBody)}`;
             }
+            return emailString;
+
+          case "sms":
+            const smsNumber = document.getElementById("smsNumber").value;
+            const smsMessage = document.getElementById("smsMessage").value;
+            return `sms:${smsNumber}${
+              smsMessage ? `?body=${encodeURIComponent(smsMessage)}` : ""
+            }`;
+
+          case "wifi":
+            const ssid = document.getElementById("wifiSSID").value;
+            const password = document.getElementById("wifiPassword").value;
+            const security = document.getElementById("wifiSecurity").value;
+            return `WIFI:T:${security};S:${ssid};P:${password};;`;
+
+          default:
+            return "";
+        }
+      }
+
+      async function generateQR() {
+        const content = getQRContent();
+
+        if (!content.trim()) {
+          alert("Please enter some content for your QR code!");
+          return;
         }
 
-        async function generateQR() {
-            const content = getQRContent();
-            
-            if (!content.trim()) {
-                alert('Please enter some content for your QR code!');
-                return;
-            }
+        const generateBtn = document.getElementById("generateBtn");
+        const originalText = generateBtn.innerHTML;
 
-            const generateBtn = document.getElementById('generateBtn');
-            const originalText = generateBtn.innerHTML;
-            
-            // Show loading state
-            generateBtn.disabled = true;
-            generateBtn.innerHTML = '<span class="loading-spinner"></span>Generating...';
+        // Show loading state
+        generateBtn.disabled = true;
+        generateBtn.innerHTML =
+          '<span class="loading-spinner"></span>Generating...';
 
-            const size = parseInt(document.getElementById('qrSize').value);
-            const color = document.getElementById('qrColor').value;
-            const canvas = document.getElementById('qrCanvas');
-            
-            try {
-                // Small delay to show loading animation
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
-                qrCode = new QRious({
-                    element: canvas,
-                    value: content,
-                    size: size,
-                    foreground: color,
-                    background: '#ffffff',
-                    level: 'M'
-                });
-                
-                document.getElementById('qrResult').classList.add('show');
-                
-                // Increment stats
-                await incrementStats('created');
-                
-                // Smooth scroll to result
-                document.getElementById('qrResult').scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' 
-                });
-                
-            } catch (error) {
-                alert('Error generating QR code. Please check your input and try again.');
-                console.error('QR Generation Error:', error);
-            } finally {
-                // Reset button
-                generateBtn.disabled = false;
-                generateBtn.innerHTML = originalText;
-            }
+        const size = parseInt(document.getElementById("qrSize").value);
+        const color = document.getElementById("qrColor").value;
+        const canvas = document.getElementById("qrCanvas");
+
+        try {
+          // Small delay to show loading animation
+          await new Promise((resolve) => setTimeout(resolve, 500));
+
+          qrCode = new QRious({
+            element: canvas,
+            value: content,
+            size: size,
+            foreground: color,
+            background: "#ffffff",
+            level: "M",
+          });
+
+          document.getElementById("qrResult").classList.add("show");
+
+          // Increment stats
+          await incrementStats("created");
+
+          // Smooth scroll to result
+          document.getElementById("qrResult").scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        } catch (error) {
+          alert(
+            "Error generating QR code. Please check your input and try again."
+          );
+          console.error("QR Generation Error:", error);
+        } finally {
+          // Reset button
+          generateBtn.disabled = false;
+          generateBtn.innerHTML = originalText;
+        }
+      }
+
+      async function downloadQR(format) {
+        if (!qrCode) {
+          alert("Please generate a QR code first!");
+          return;
         }
 
-        async function downloadQR(format) {
-            if (!qrCode) {
-                alert('Please generate a QR code first!');
-                return;
-            }
-            
-            const canvas = document.getElementById('qrCanvas');
-            const link = document.createElement('a');
-            
-            if (format === 'png') {
-                link.download = 'qrcode.png';
-                link.href = canvas.toDataURL('image/png');
-            } else if (format === 'jpg') {
-                // Create a new canvas with white background for JPG
-                const tempCanvas = document.createElement('canvas');
-                const tempCtx = tempCanvas.getContext('2d');
-                tempCanvas.width = canvas.width;
-                tempCanvas.height = canvas.height;
-                
-                // Fill with white background
-                tempCtx.fillStyle = '#FFFFFF';
-                tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-                
-                // Draw the QR code on top
-                tempCtx.drawImage(canvas, 0, 0);
-                
-                link.download = 'qrcode.jpg';
-                link.href = tempCanvas.toDataURL('image/jpeg', 0.9);
-            }
-            
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            // Increment download stats
-            await incrementStats('downloaded');
+        const canvas = document.getElementById("qrCanvas");
+        const link = document.createElement("a");
+
+        if (format === "png") {
+          link.download = "qrcode.png";
+          link.href = canvas.toDataURL("image/png");
+        } else if (format === "jpg") {
+          // Create a new canvas with white background for JPG
+          const tempCanvas = document.createElement("canvas");
+          const tempCtx = tempCanvas.getContext("2d");
+          tempCanvas.width = canvas.width;
+          tempCanvas.height = canvas.height;
+
+          // Fill with white background
+          tempCtx.fillStyle = "#FFFFFF";
+          tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+          // Draw the QR code on top
+          tempCtx.drawImage(canvas, 0, 0);
+
+          link.download = "qrcode.jpg";
+          link.href = tempCanvas.toDataURL("image/jpeg", 0.9);
         }
 
-        // Initialize with default input fields
-        updateInputFields();
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Increment download stats
+        await incrementStats("downloaded");
+      }
+
+      // Initialize with default input fields
+      updateInputFields();
     </script>
-</body>
+  </body>
 </html>

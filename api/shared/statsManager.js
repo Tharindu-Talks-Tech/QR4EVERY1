@@ -7,8 +7,8 @@ const path = require('path');
 class StatsManager {
     constructor() {
         this.DEFAULT_STATS = {
-            created: 150,  // Start with some realistic numbers
-            downloaded: 89
+            created: 0,  // Fresh start with 0
+            downloaded: 0
         };
         
         // Use a temp directory that persists across function calls
@@ -64,6 +64,18 @@ class StatsManager {
         const stats = { ...this.DEFAULT_STATS };
         await this.saveStats(stats);
         return stats;
+    }
+
+    // Force a fresh start by removing existing stats file
+    async forceReset() {
+        try {
+            await fs.unlink(this.statsFilePath);
+            console.log('Stats file deleted for fresh start');
+        } catch (error) {
+            // File doesn't exist, which is fine
+            console.log('No existing stats file to delete');
+        }
+        return this.DEFAULT_STATS;
     }
 }
 
