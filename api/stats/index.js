@@ -1,4 +1,4 @@
-const { TableClient } = require("@azure/data-tables");
+const statsManager = require('../shared/statsManager');
 
 module.exports = async function (context, req) {
     // Handle CORS preflight
@@ -15,13 +15,8 @@ module.exports = async function (context, req) {
     }
 
     try {
-        // Simple in-memory counter for free tier
-        // In production, you could use Azure Table Storage
-        
-        const stats = {
-            created: Math.floor(Math.random() * 1000) + 100, // Start with some demo numbers
-            downloaded: Math.floor(Math.random() * 800) + 50
-        };
+        // Get current stats using the shared stats manager
+        const stats = await statsManager.getCurrentStats();
         
         context.res = {
             status: 200,
@@ -34,10 +29,12 @@ module.exports = async function (context, req) {
             body: stats
         };
     } catch (error) {
+        context.log('Error fetching stats:', error);
         context.res = {
             status: 500,
             headers: {
-                'Access-Control-Allow-Origin': '*'
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
             },
             body: { error: 'Failed to fetch stats' }
         };

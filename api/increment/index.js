@@ -1,3 +1,5 @@
+const statsManager = require('../shared/statsManager');
+
 module.exports = async function (context, req) {
     // Handle CORS preflight
     if (req.method === 'OPTIONS') {
@@ -16,9 +18,10 @@ module.exports = async function (context, req) {
         context.res = {
             status: 405,
             headers: {
-                'Access-Control-Allow-Origin': '*'
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
             },
-            body: 'Method not allowed'
+            body: { error: 'Method not allowed' }
         };
         return;
     }
@@ -26,12 +29,22 @@ module.exports = async function (context, req) {
     try {
         const { type } = req.body;
         
-        // Simple increment logic
-        // In production, you would update Azure Table Storage
-        const stats = {
-            created: type === 'created' ? Math.floor(Math.random() * 1000) + 101 : Math.floor(Math.random() * 1000) + 100,
-            downloaded: type === 'downloaded' ? Math.floor(Math.random() * 800) + 51 : Math.floor(Math.random() * 800) + 50
-        };
+        if (!type || (type !== 'created' && type !== 'downloaded')) {
+            context.res = {
+                status: 400,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type': 'application/json'
+                },
+                body: { error: 'Invalid increment type. Must be "created" or "downloaded"' }
+            };
+            return;
+        }
+        
+        // Increment the appropriate counter using the shared stats manager
+        const stats = await statsManager.incrementCount(type);
+        
+        context.log(`Incremented ${type} counter. New stats:`, stats);
         
         context.res = {
             status: 200,
@@ -44,10 +57,12 @@ module.exports = async function (context, req) {
             body: stats
         };
     } catch (error) {
+        context.log('Error incrementing stats:', error);
         context.res = {
             status: 500,
             headers: {
-                'Access-Control-Allow-Origin': '*'
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
             },
             body: { error: 'Failed to increment stats' }
         };
