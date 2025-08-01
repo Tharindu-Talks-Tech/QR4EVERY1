@@ -64,6 +64,48 @@
             font-size: 1.1em;
         }
 
+        .stats-banner {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+            animation: countUp 2s ease-out;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .input-section {
             margin-bottom: 30px;
         }
@@ -119,6 +161,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-bottom: 30px;
+            position: relative;
         }
 
         .generate-btn:hover {
@@ -128,6 +171,26 @@
 
         .generate-btn:active {
             transform: translateY(0);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         .qr-result {
@@ -219,7 +282,7 @@
                 font-size: 2em;
             }
 
-            .options-grid {
+            .options-grid, .stats-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -230,6 +293,20 @@
         <div class="header">
             <h1>🎯 QR Code Generator</h1>
             <p>Create permanent QR codes that never expire - 100% Free!</p>
+        </div>
+
+        <div class="stats-banner">
+            <h3>🌟 Community Impact</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number" id="qrCreatedCount">Loading...</span>
+                    <div class="stat-label">QR Codes Created</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="qrDownloadCount">Loading...</span>
+                    <div class="stat-label">Downloads</div>
+                </div>
+            </div>
         </div>
 
         <div class="input-section">
@@ -269,7 +346,7 @@
                 </div>
             </div>
 
-            <button class="generate-btn" onclick="generateQR()">
+            <button class="generate-btn" onclick="generateQR()" id="generateBtn">
                 🎨 Generate QR Code
             </button>
         </div>
@@ -299,6 +376,96 @@
 
     <script>
         let qrCode = null;
+        let stats = { created: 0, downloaded: 0 };
+
+        // Load stats on page load
+        window.addEventListener('load', loadStats);
+
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/stats');
+                if (response.ok) {
+                    const data = await response.json();
+                    stats = data;
+                    updateStatsDisplay();
+                } else {
+                    // Fallback to localStorage if API fails
+                    loadLocalStats();
+                }
+            } catch (error) {
+                console.log('API not available, using local stats');
+                loadLocalStats();
+            }
+        }
+
+        function loadLocalStats() {
+            const localStats = JSON.parse(localStorage.getItem('qrStats') || '{"created": 0, "downloaded": 0}');
+            stats = localStats;
+            updateStatsDisplay();
+        }
+
+        function updateStatsDisplay() {
+            const createdElement = document.getElementById('qrCreatedCount');
+            const downloadedElement = document.getElementById('qrDownloadCount');
+            
+            animateNumber(createdElement, stats.created);
+            animateNumber(downloadedElement, stats.downloaded);
+        }
+
+        function animateNumber(element, target) {
+            const start = 0;
+            const duration = 2000;
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const current = Math.floor(start + (target - start) * progress);
+                
+                element.textContent = current.toLocaleString();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+
+        async function incrementStats(type) {
+            try {
+                const response = await fetch('/api/increment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ type: type })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    stats = data;
+                    updateStatsDisplay();
+                } else {
+                    // Fallback to localStorage
+                    incrementLocalStats(type);
+                }
+            } catch (error) {
+                console.log('API not available, using local stats');
+                incrementLocalStats(type);
+            }
+        }
+
+        function incrementLocalStats(type) {
+            if (type === 'created') {
+                stats.created++;
+            } else if (type === 'downloaded') {
+                stats.downloaded++;
+            }
+            
+            localStorage.setItem('qrStats', JSON.stringify(stats));
+            updateStatsDisplay();
+        }
 
         function updateInputFields() {
             const type = document.getElementById('qrType').value;
@@ -422,7 +589,7 @@
             }
         }
 
-        function generateQR() {
+        async function generateQR() {
             const content = getQRContent();
             
             if (!content.trim()) {
@@ -430,11 +597,21 @@
                 return;
             }
 
+            const generateBtn = document.getElementById('generateBtn');
+            const originalText = generateBtn.innerHTML;
+            
+            // Show loading state
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<span class="loading-spinner"></span>Generating...';
+
             const size = parseInt(document.getElementById('qrSize').value);
             const color = document.getElementById('qrColor').value;
             const canvas = document.getElementById('qrCanvas');
             
             try {
+                // Small delay to show loading animation
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
                 qrCode = new QRious({
                     element: canvas,
                     value: content,
@@ -446,6 +623,9 @@
                 
                 document.getElementById('qrResult').classList.add('show');
                 
+                // Increment stats
+                await incrementStats('created');
+                
                 // Smooth scroll to result
                 document.getElementById('qrResult').scrollIntoView({ 
                     behavior: 'smooth', 
@@ -455,10 +635,14 @@
             } catch (error) {
                 alert('Error generating QR code. Please check your input and try again.');
                 console.error('QR Generation Error:', error);
+            } finally {
+                // Reset button
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = originalText;
             }
         }
 
-        function downloadQR(format) {
+        async function downloadQR(format) {
             if (!qrCode) {
                 alert('Please generate a QR code first!');
                 return;
@@ -491,6 +675,9 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            
+            // Increment download stats
+            await incrementStats('downloaded');
         }
 
         // Initialize with default input fields
