@@ -15,6 +15,9 @@ module.exports = async function (context, req) {
     if (req.method !== 'POST') {
         context.res = {
             status: 405,
+            headers: {
+                'Access-Control-Allow-Origin': '*'
+            },
             body: 'Method not allowed'
         };
         return;

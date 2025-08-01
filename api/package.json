@@ -1,0 +1,16 @@
+{
+  "name": "qr4everyone-api",
+  "version": "1.0.0",
+  "description": "Azure Functions for QR4EVERY1",
+  "main": "index.js",
+  "scripts": {
+    "start": "func start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@azure/data-tables": "^13.0.0"
+  },
+  "devDependencies": {
+    "azure-functions-core-tools": "^4.0.0"
+  }
+}
